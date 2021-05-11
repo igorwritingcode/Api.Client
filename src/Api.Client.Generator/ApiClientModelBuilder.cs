@@ -64,7 +64,7 @@ namespace Api.Client.Generator
                 };
                 if (field.Type is ApiFieldType.Object)
                 {
-                    CreateApiTypeFields(property.Value.Properties, field);
+                    CreateApiTypeFields(property.Value.Properties, field, property.Value.Required);
                 }
                 fields.Add(field);
             }
@@ -72,7 +72,7 @@ namespace Api.Client.Generator
             return fields;
         }
 
-        private static void CreateApiTypeFields(IDictionary<string, OpenApiSchema> schema, ApiField field)
+        private static void CreateApiTypeFields(IDictionary<string, OpenApiSchema> schema, ApiField field, ISet<string> required = null)
         {
             ((ApiFieldType.Object)field.Type).Fields = new();
 
@@ -81,12 +81,15 @@ namespace Api.Client.Generator
                 ApiField childField = new();
 
                 childField.Name = element.Key;
-                childField.Required = element.Value.Required.Any(s => s == element.Key);
                 childField.Type = ApiFieldTypeConverter.Convert(element.Value.Type);
 
                 if (ApiFieldTypeConverter.Convert(element.Value.Type) is ApiFieldType.Object)
                 {
-                    CreateApiTypeFields(element.Value.Properties, childField);
+                    CreateApiTypeFields(element.Value.Properties, childField, element.Value.Required);
+                }
+                if(required != null)
+                {
+                    childField.Required = required.Any(s => s == element.Key);
                 }
 
                 ((ApiFieldType.Object)field.Type).Fields.Add(childField);
