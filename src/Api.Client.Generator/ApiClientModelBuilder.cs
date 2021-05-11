@@ -102,11 +102,34 @@ namespace Api.Client.Generator
                 foreach (var operation in pathItem.Value.Operations)
                 {
                     var apiRequest = CreateApiRequest(operation.Value, operation.Key.ToString(), pathItem.Key);
+                    apiRequest.Responses = CreateApiResponses(operation.Value);
                     apiRequests.Add(operation.Value.OperationId, apiRequest);
                 }
             }
 
             return apiRequests;
+        }
+
+        private static IEnumerable<ApiResponse> CreateApiResponses(OpenApiOperation operation)
+        {
+            foreach (var response in operation.Responses)
+            {
+                //TODO:response.Value.Content[JSON_MEDIA_TYPE].Schema.Reference.Id.throwIfNullOrEmpty();
+                if (!response.Value.Content.Any())
+                {
+                    continue;
+                }
+
+                yield return new ApiResponse()
+                {
+                    StatusCode = response.Key,
+                    Body = new ApiFieldType.Object()
+                    {
+                        ClassName = response.Value.Content[JSON_MEDIA_TYPE].Schema.Reference.Id,
+                        Fields = CreateApiFields(response.Value.Content[JSON_MEDIA_TYPE])
+                    }
+                };               
+            }
         }
     }
 }

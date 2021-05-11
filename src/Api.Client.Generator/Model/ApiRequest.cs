@@ -1,7 +1,6 @@
 ﻿#nullable enable
 #pragma warning disable CS8618
 
-using Api.Client.Generator.Model;
 using System.Collections.Generic;
 
 namespace Api.Client.Generator.Model
@@ -14,7 +13,7 @@ namespace Api.Client.Generator.Model
         public string HttpMethod { get; set; }
         public ApiFieldType.Object? Body { get; set; } = new();
         public string[] Parameters { get; set; }
-        public ApiResponse Response { get; set; }
+        public IEnumerable<ApiResponse> Responses { get; set; }
     }
 
     public class ApiField
