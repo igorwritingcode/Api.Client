@@ -10,24 +10,27 @@ namespace Api.Client.Generator.CSharp
         {
             _context = context;
         }
-        private string GenerateClientDefinition(string apiName)
-        {
-            var builder = new StringBuilder();
-            builder.AppendLine($"public class {apiName}Client : BaseClient {{");
-            builder.AppendLine($"public override string Name => \"{apiName}\"");
-            builder.AppendLine($"public override string Name => \"{apiName}\"");
-            //public QuoteInsuranceResource Insurance { get; private set; }
 
-            builder.AppendLine("}}");
-            return builder.ToString();
+
+        public void GenerateFiles(IDocumentWriter documentWriter)
+        {
+            var resourcesGenerator = new CSharpApiModelResourceGenerator(_context);
+            foreach (var apiResource in _context.GetResources())
+            {
+                WriteToDocument(documentWriter, $"{apiResource.Key}Client.gen.cs", resourcesGenerator.GenerateApiClient(apiResource, "ClassName"));
+            }
         }
 
-        public string GenerateResourceDefinition(string apiName)
+        private static void WriteToDocument(IDocumentWriter documentWriter, string path, string content)
         {
-            var builder = new StringBuilder();
-            builder.AppendLine($"public override string Name => \"{apiName}\"");
-            return builder.ToString();
+            var document = new CSharpClass();
+            document.AppendLine(content);
+            documentWriter.WriteDocument(
+                path,
+                document.ToString());
         }
+
+  
     }
 
 

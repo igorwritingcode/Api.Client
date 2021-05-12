@@ -1,4 +1,5 @@
-﻿using Api.Client.Generator.CSharp;
+﻿using Api.Client.Generator;
+using Api.Client.Generator.CSharp;
 using Api.Client.Generator.Model;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
@@ -13,7 +14,12 @@ namespace IfApi.Client.CodeGenerator
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(Fun.Logo);
+            Console.WriteLine();
+            Console.ResetColor();
+            Console.WriteLine("Generate API client code from swagger.json");
 
             GenerateClient();
         }
@@ -23,14 +29,14 @@ namespace IfApi.Client.CodeGenerator
             //read open api document (swagger.json)
             var openApiDocument = ReadOpenApiDocument();
             
-            //create client model from the open api document
+            //create client model from the open api document / resourceName is parameter.
             var apiClientModel = ApiClientModel.CreateFrom(openApiDocument, new string[] { "Insurance" });
             var apiModelContext = ApiModelContext.CreateFrom(apiClientModel);
 
-
             //generate cshart code
             var csharpClientGenerator = new CSharpApiClientGenerator(apiModelContext);
-            //    .GenerateResourceDefinition("IfBrandedInsuranceSe")
+            csharpClientGenerator.GenerateFiles(new DocumentWriter(new DirectoryInfo(Path.GetFullPath(OutputPath))));
+                //.GenerateResourceDefinition("IfBrandedCarInsuranceSe")
             //    .WriteToPath(OutputPath);
         }
 
