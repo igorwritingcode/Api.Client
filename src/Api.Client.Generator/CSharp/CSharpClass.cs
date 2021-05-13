@@ -13,6 +13,8 @@ namespace Api.Client.Generator.CSharp
             builder.AppendLine($"using System;");
             builder.AppendLine($"using Api.Common;");
             builder.AppendLine($"using Api.Common.Auth;");
+            builder.AppendLine($"using Api.Client.IfCarApiSe.Dtos;");
+
             builder.AppendLine($"");
 
             builder.Append(_builder.ToString());

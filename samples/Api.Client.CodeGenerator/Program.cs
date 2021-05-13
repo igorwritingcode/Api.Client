@@ -35,9 +35,10 @@ namespace IfApi.Client.CodeGenerator
 
             //generate cshart code
             var csharpClientGenerator = new CSharpApiClientGenerator(apiModelContext);
-            csharpClientGenerator.GenerateFiles(new DocumentWriter(new DirectoryInfo(Path.GetFullPath(OutputPath))));
-                //.GenerateResourceDefinition("IfBrandedCarInsuranceSe")
-            //    .WriteToPath(OutputPath);
+            csharpClientGenerator
+                .GenerateFiles(
+                    new DocumentWriter(new DirectoryInfo(Path.GetFullPath(OutputPath)))
+                );
         }
 
         private static OpenApiDocument ReadOpenApiDocument()

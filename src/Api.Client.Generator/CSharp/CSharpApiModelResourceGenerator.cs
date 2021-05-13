@@ -12,6 +12,34 @@ namespace Api.Client.Generator.CSharp
             _apiModelContext = apiModelContext;
         }
 
+        public string GenerateApiClientResources(KeyValuePair<string, ApiResource> resource)
+        {
+            var builder = new StringBuilder();
+
+            builder.AppendLine($"public class {resource.Key}Resource");
+            builder.AppendLine($"{{");
+            
+            builder.AppendLine($"IClient Client {{ get; init; }}");
+            
+            builder.AppendLine($"public {resource.Key}Resource (IClient client)");
+            builder.AppendLine($"{{");
+            builder.AppendLine($"Client = client;");
+            builder.AppendLine($"}}");
+
+
+            foreach (var request in resource.Value.GetRequests())
+            {
+                builder.AppendLine($"public {request.Key} {request.Value.Name}({request.Value.Body.ClassName} body)");
+                builder.AppendLine($"{{");
+                builder.AppendLine($"return new {request.Value.Name}(Client, body);");
+                builder.AppendLine($"}}");
+            }
+
+            builder.AppendLine($"}}");
+
+            return builder.ToString();
+        }
+
         public string GenerateApiClient(KeyValuePair<string, ApiResource> resource, string clientClassName)
         {
             var builder = new StringBuilder();

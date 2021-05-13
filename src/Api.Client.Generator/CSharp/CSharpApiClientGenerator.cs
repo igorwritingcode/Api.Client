@@ -15,6 +15,13 @@ namespace Api.Client.Generator.CSharp
         public void GenerateFiles(IDocumentWriter documentWriter)
         {
             var resourcesGenerator = new CSharpApiModelResourceGenerator(_context);
+
+            foreach (var apiResource in _context.GetResources())
+            {
+                WriteToDocument(documentWriter, $"{apiResource.Key}Resource.gen.cs", resourcesGenerator.GenerateApiClient(apiResource, "ClassName"));
+            }
+
+
             foreach (var apiResource in _context.GetResources())
             {
                 WriteToDocument(documentWriter, $"{apiResource.Key}Client.gen.cs", resourcesGenerator.GenerateApiClient(apiResource, "ClassName"));

@@ -15,5 +15,8 @@ namespace Api.Client.Generator.Model
             _name = name;
             _requests = requests;
         }
+
+        public SortedDictionary<string, ApiRequest> GetRequests() => _requests;
+        
     }
 }
