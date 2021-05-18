@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Api.Common.Requests;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -15,6 +16,7 @@ namespace Api.Common
         public abstract string HttpMethod { get; }
         public IClient Client { get; init; }
         public Action<HttpRequestMessage> ModifyRequest { get; set; }
+        public IDictionary<string, IParameter> RequestParameters { get; private set; }
         public ClientBaseRequest(IClient client)
         {
             Client = client;
@@ -25,6 +27,7 @@ namespace Api.Common
             var request = builder.CreateRequest();
             object body = GetBody();
             request.SetRequestSerailizedContent(Client, body);
+                
 
             if (_executeInterceptor != null)
             {
@@ -89,6 +92,11 @@ namespace Api.Common
             using var response = await ExecuteUnparsedAsync(cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
             return await ParseResponse(response).ConfigureAwait(false);
+        }
+
+        public virtual void InitParameters()
+        {
+            RequestParameters = new Dictionary<string, IParameter>();
         }
 
         private async Task<HttpResponseMessage> ExecuteUnparsedAsync(CancellationToken cancellationToken)

@@ -6,17 +6,14 @@ namespace Api.Client.Generator.Model
     public class ApiResource
     {
         private readonly string _name;
-        private SortedDictionary<string, ApiRequest> _requests;
+        public SortedDictionary<string, ApiRequest> Requests { get; init; }
 
         public ApiResource(
             string name,
             SortedDictionary<string, ApiRequest> requests)
         {
             _name = name;
-            _requests = requests;
-        }
-
-        public SortedDictionary<string, ApiRequest> GetRequests() => _requests;
-        
+            Requests = requests;
+        }        
     }
 }
