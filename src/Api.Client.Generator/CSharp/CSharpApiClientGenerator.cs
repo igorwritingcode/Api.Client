@@ -1,11 +1,11 @@
 ﻿using Api.Client.Generator.Model;
-using System.Text;
 
 namespace Api.Client.Generator.CSharp
 {
     public class CSharpApiClientGenerator
     {
         private readonly ApiModelContext _context;
+
         public CSharpApiClientGenerator(ApiModelContext context)
         {
             _context = context;
@@ -13,11 +13,12 @@ namespace Api.Client.Generator.CSharp
 
         public void GenerateFiles(IDocumentWriter documentWriter)
         {
-            var resourcesGenerator = new CSharpApiModelResourceGenerator(_context);
+            //var resourcesGenerator = new CSharpApiModelResourceGenerator(_context);
 
             foreach (var request in _context.GetRequests())
             {
-                WriteToDocument(documentWriter, $"{request.Value.Name}Request.gen.cs", resourcesGenerator.GenerateApiClientRequests(request));
+                WriteToDocument(documentWriter, $"{request.Value.Name}Body.gen.cs", CSharpApiModelResourceGenerator.GenerateRequestBody(request));
+                WriteToDocument(documentWriter, $"{request.Value.Name}Request.gen.cs", CSharpApiModelResourceGenerator.GenerateApiClientRequests(request));
             }
 
             //foreach (var apiResource in _context.GetResources())

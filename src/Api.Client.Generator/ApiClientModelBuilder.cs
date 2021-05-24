@@ -1,4 +1,5 @@
-﻿using Api.Client.Generator.Model;
+﻿using Api.Client.Generator.CSharp;
+using Api.Client.Generator.Model;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,10 +63,16 @@ namespace Api.Client.Generator
                     Name = property.Key.FirstUpper(),
                     Type = ApiFieldTypeConverter.Convert(property.Value.Type)
                 };
+
                 if (field.Type is ApiFieldType.Object)
                 {
                     CreateApiTypeFields(property.Value.Properties, field, property.Value.Required);
                 }
+                else if (field.Type is ApiFieldType.Array array)
+                {
+                    array.Type = property.Value.Items.Type;
+                }
+
                 fields.Add(field);
             }
 
@@ -87,6 +94,7 @@ namespace Api.Client.Generator
                 {
                     CreateApiTypeFields(element.Value.Properties, childField, element.Value.Required);
                 }
+
                 if(required != null)
                 {
                     childField.Required = required.Any(s => s == element.Key);
@@ -117,7 +125,7 @@ namespace Api.Client.Generator
         {
             foreach (var response in operation.Responses)
             {
-                //TODO:response.Value.Content[JSON_MEDIA_TYPE].Schema.Reference.Id.throwIfNullOrEmpty();
+                // TODO:response.Value.Content[JSON_MEDIA_TYPE].Schema.Reference.Id.throwIfNullOrEmpty();
                 if (!response.Value.Content.Any())
                 {
                     continue;

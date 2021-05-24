@@ -29,7 +29,11 @@ namespace Api.Client.Generator.Model
         public bool Nullable { get; set; }
         public class Array : ApiFieldType
         {
-            public ApiFieldType Type { get; set; } = default!;
+            public string Type { get; set; } = default!;
+            public Array(string type)
+            {
+                Type = type;
+            }
         }
 
         public class Object : ApiFieldType
@@ -40,6 +44,11 @@ namespace Api.Client.Generator.Model
         public class Primitive : ApiFieldType
         {
             public string Type { get; set; } = default!;
+
+            public Primitive(string type)
+            {
+                Type = type;
+            }
         }
     }
 }
