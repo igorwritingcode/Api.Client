@@ -22,5 +22,6 @@ namespace Api.Client.Generator.Model
 
         public SortedDictionary<string, ApiResource> GetResources() => ApiClientModel.Resources;
         public IEnumerable<KeyValuePair<string, ApiRequest>> GetRequests() => ApiClientModel.Resources.Values.SelectMany(s => s.Requests);
+        public IEnumerable<ApiField> GetApiFields() => GetRequests().SelectMany(s => s.Value.Body.Fields);
     }
 }
