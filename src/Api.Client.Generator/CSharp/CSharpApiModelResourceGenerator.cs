@@ -8,22 +8,38 @@ namespace Api.Client.Generator.CSharp
 {
     public class CSharpApiModelResourceGenerator
     {
-        private List<ApiField> _apiFields = new List<ApiField>();
+        private readonly List<ApiField> _allObjectFields = new List<ApiField>();
+
         private ApiModelContext _context { get; init; }
         public CSharpApiModelResourceGenerator(ApiModelContext context)
         {
             _context = context;
         }
 
-        private void GenerateApiFields(StringBuilder builder)
+        private void PrepareChildObjectFieldsList(ApiField parentField)
         {
-            var indent = new Indent();
-
-            foreach (var field in _apiFields)
+            if (parentField.Type is ApiFieldType.Object parentObjectField)
             {
+                _allObjectFields.Add(parentField);
+
+                foreach (var childField in parentObjectField.Fields)
+                {
+                    if (childField.Type is ApiFieldType.Object)
+                    {
+                        PrepareChildObjectFieldsList(childField);
+                    }
+                }
+            }
+        }
+
+        private void GenerateRequestBodyClasses(StringBuilder builder)
+        {
+            foreach (var field in _allObjectFields)
+            {
+                var indent = new Indent();
                 var objectField = field.Type as ApiFieldType.Object;
 
-                builder.AppendLine($"{indent}public class {field.Name}");
+                builder.AppendLine($"{indent}public class {field.Name.FirstUpper()}");
                 builder.AppendLine($"{indent}{{");
                 indent.Increment();
 
@@ -34,6 +50,11 @@ namespace Api.Client.Generator.CSharp
                     {
                         builder.AppendLine($"{indent}public {primitiveType.ToPrimitiveType()} {childField.Name} {{ get; set; }}");
                     }
+
+                    if(childField.Type is ApiFieldType.Object)
+                    {
+                        builder.AppendLine($"{indent}public {childField.Name.FirstUpper()} {childField.Name} {{ get; set; }}");
+                    }
                 }
 
                 indent.Decrement();
@@ -41,10 +62,21 @@ namespace Api.Client.Generator.CSharp
             }
         }
 
+        private void GenerateBodyObjectFields(StringBuilder builder, List<ApiField> bodyObjectFields)
+        {
+            foreach (var field in bodyObjectFields)
+            {
+                PrepareChildObjectFieldsList(field);
+            }
+            
+            GenerateRequestBodyClasses(builder);
+        }
+
         public string GenerateRequestBody(KeyValuePair<string, ApiRequest> request)
         {
             var indent = new Indent();
             var builder = new StringBuilder();
+            List<ApiField> parentRequestBodyObjectFields = new();
 
             var requestName = $"{request.Value.Name}Request";
             builder.AppendLine($"{indent}public class {requestName}Body");
@@ -72,14 +104,14 @@ namespace Api.Client.Generator.CSharp
                 if(field.Type is ApiFieldType.Object)
                 {
                     builder.AppendLine($"{indent}public {field.Name} {field.Name} {{ get; set; }}");
-                    _apiFields.Add(field);
+                    parentRequestBodyObjectFields.Add(field);
                 }
             }
 
             indent.Decrement();
             builder.AppendLine($"{indent}}}");
 
-            GenerateApiFields(builder);
+            GenerateBodyObjectFields(builder, parentRequestBodyObjectFields);
 
             return builder.ToString();
         }

@@ -37,9 +37,23 @@ public class PaymentOptions
 public class Vehicle
 {
     [JsonPropertyName("vehicleIdentity")]
+    public VehicleIdentity vehicleIdentity { get; set; }
     [JsonPropertyName("modelIdentity")]
+    public ModelIdentity modelIdentity { get; set; }
     [JsonPropertyName("brand")]
     public string brand { get; set; }
+}
+public class VehicleIdentity
+{
+    [JsonPropertyName("registrationNumberSv")]
+    public string registrationNumberSv { get; set; }
+    [JsonPropertyName("vehicleIdentificationNumber")]
+    public string vehicleIdentificationNumber { get; set; }
+}
+public class ModelIdentity
+{
+    [JsonPropertyName("variantId")]
+    public string variantId { get; set; }
 }
 public class InsurancePolicyHolder
 {
@@ -55,6 +69,14 @@ public class PartnerIdentity
     [JsonPropertyName("authorizedDealerId")]
     public string authorizedDealerId { get; set; }
     [JsonPropertyName("bundledProduct")]
+    public BundledProduct bundledProduct { get; set; }
+}
+public class BundledProduct
+{
+    [JsonPropertyName("isBundledProduct")]
+    public boolean isBundledProduct { get; set; }
+    [JsonPropertyName("bundledProductId")]
+    public string bundledProductId { get; set; }
 }
 public class PriceCalculationParameters
 {
