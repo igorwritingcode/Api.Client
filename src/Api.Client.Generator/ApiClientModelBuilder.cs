@@ -1,4 +1,5 @@
 ﻿using Api.Client.Generator.CSharp;
+using Api.Client.Generator.Extensions;
 using Api.Client.Generator.Model;
 using Microsoft.OpenApi.Models;
 using System;
@@ -21,16 +22,21 @@ namespace Api.Client.Generator
 
         private static ApiRequest CreateApiRequest(OpenApiOperation operation, string httpMethod, string restPath)
         {
+            //TODO: move name building logic to separate class. There are different ways how to generate name if OperationId is null
+            
             ApiRequest apiRequest = new()
             {
-                Name = operation.OperationId?.FirstUpper(),
+                Name = CreateName(operation),
                 HttpMethod = httpMethod.ToUpper(),
                 RestPath = restPath
             };
 
-            apiRequest.Body = operation.RequestBody is not null
+            if (operation.RequestBody.IsEligibleContentType())
+            {
+                apiRequest.Body = operation.RequestBody is not null
                 ? CreateApiRequestBody(operation)
                 : null;
+            }
 
             apiRequest.Parameters = operation.Parameters.Any()
                 ? CreateApiRequestParameters(operation.Parameters)
@@ -39,18 +45,28 @@ namespace Api.Client.Generator
             return apiRequest;
         }
 
+        private static string CreateName(OpenApiOperation operation)
+        {
+            var name = operation.OperationId ?? operation.Summary.Replace(" ", "");
+
+            if (operation.Tags.Any())
+            {
+                name = operation.Tags.First().Name;
+            }
+
+            return name.FirstUpper();
+        }
+
         private static ApiFieldType.Object CreateApiRequestBody(OpenApiOperation operation)
         {
-            if (operation.RequestBody.Content.ContainsKey(JSON_MEDIA_TYPE))
+            var contentType = operation.RequestBody.Content.First().Key;
+
+            return new ApiFieldType.Object()
             {
-                return new ApiFieldType.Object()
-                {
-                    ClassName = $"{operation.OperationId.FirstUpper()}Body",
-                    Nullable = false,
-                    Fields = CreateApiFields(operation.RequestBody.Content[JSON_MEDIA_TYPE])
-                };
-            }
-            return null;
+                ClassName = $"{CreateName(operation)}Body",
+                Nullable = false,
+                Fields = CreateApiFields(operation.RequestBody.Content[contentType])
+            };
         }
         private static string[] CreateApiRequestParameters(IEnumerable<OpenApiParameter> openApiParameter)
         {
@@ -113,10 +129,13 @@ namespace Api.Client.Generator
         {
             SortedDictionary<string, ApiRequest> apiRequests = new();
 
+            var txt = paths.SelectMany(s => s.Value.Operations);
+
             foreach (var pathItem in paths)
             {
                 foreach (var operation in pathItem.Value.Operations)
                 {
+                    
                     var apiRequest = CreateApiRequest(operation.Value, operation.Key.ToString(), pathItem.Key);
                     apiRequest.Responses = CreateApiResponses(operation.Value);
                     apiRequests.Add(operation.Value.OperationId ?? Guid.NewGuid().ToString(), apiRequest);

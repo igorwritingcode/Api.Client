@@ -10,7 +10,7 @@ namespace Api.Client.Generator
             _root = root;
         }
         public void WriteDocument(string path, string content)
-        {
+        {           
             _root.Create();
             var filePath = Path.Combine(_root.FullName, path);
             Directory.GetParent(filePath).Create();

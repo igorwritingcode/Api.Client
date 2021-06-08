@@ -6,7 +6,7 @@ using Microsoft.OpenApi.Readers;
 using System;
 using System.IO;
 
-namespace IfApi.Client.CodeGenerator
+namespace Api.Client.CodeGenerator
 {
     class Program
     {

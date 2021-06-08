@@ -214,7 +214,7 @@ namespace Api.Client.Generator.CSharp
             return builder.ToString();
         }
 
-        public static string GenerateApiClient(KeyValuePair<string, ApiResource> resource, string clientClassName)
+        public string GenerateApiClient(KeyValuePair<string, ApiResource> resource, string clientClassName)
         {
             var builder = new StringBuilder();
 
