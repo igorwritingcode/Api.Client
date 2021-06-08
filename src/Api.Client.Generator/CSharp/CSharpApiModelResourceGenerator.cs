@@ -148,12 +148,14 @@ namespace Api.Client.Generator.CSharp
             {
                 foreach (var param in request.Value.Parameters)
                 {
-                    classParams.Add("string", param);
+                    if (!classParams.ContainsKey(param))
+                    {
+                        classParams.Add(param, "string");
+                    }
                 }
-                
             }
             
-            builder.AppendLine($"{indent}public {requestName} (IClient client, {string.Join(", ", classParams.Select(x => $"{x.Key} {x.Value}"))}) : base(client)");
+            builder.AppendLine($"{indent}public {requestName} (IClient client, {string.Join(", ", classParams.Select(x => $"{x.Value} {x.Key}"))}) : base(client)");
             builder.AppendLine($"{indent}{{");
             indent.Increment();
 

@@ -40,12 +40,16 @@ namespace Api.Client.Generator
 
         private static ApiFieldType.Object CreateApiRequestBody(OpenApiOperation operation)
         {
-            return new ApiFieldType.Object()
+            if (operation.RequestBody.Content.ContainsKey(JSON_MEDIA_TYPE))
             {
-                ClassName = $"{operation.OperationId.FirstUpper()}Body",
-                Nullable = false,
-                Fields = CreateApiFields(operation.RequestBody.Content[JSON_MEDIA_TYPE])
-            };
+                return new ApiFieldType.Object()
+                {
+                    ClassName = $"{operation.OperationId.FirstUpper()}Body",
+                    Nullable = false,
+                    Fields = CreateApiFields(operation.RequestBody.Content[JSON_MEDIA_TYPE])
+                };
+            }
+            return null;
         }
         private static string[] CreateApiRequestParameters(IEnumerable<OpenApiParameter> openApiParameter)
         {

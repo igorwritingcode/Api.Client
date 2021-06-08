@@ -4,7 +4,7 @@ namespace Api.Client.Generator.CSharp
 {
     public class CSharpClass
     {
-        private readonly StringBuilder _builder = new StringBuilder();
+        private readonly StringBuilder _builder = new();
         public void AppendLine(string content) => _builder.AppendLine(content);
 
         public override string ToString()
@@ -15,10 +15,11 @@ namespace Api.Client.Generator.CSharp
             builder.AppendLine($"using Api.Common.Auth;");
             builder.AppendLine($"using Api.Client.IfCarApiSe.Dtos;");
 
-            builder.AppendLine($"");
+            builder.AppendLine("namespace Api.Client {");
 
-            builder.Append(_builder.ToString());
+            builder.Append(_builder);
 
+            builder.AppendLine("}");
             return builder.ToString();
         }
     }

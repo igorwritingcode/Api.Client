@@ -26,14 +26,14 @@ namespace IfApi.Client.CodeGenerator
 
         private static void GenerateClient()
         {
-            //read open api document (swagger.json)
+            // read open api document (swagger.json)
             var openApiDocument = ReadOpenApiDocument();
             
-            //create client model from the open api document / resourceName is parameter.
+            // create client model from the open api document / resourceName is parameter.
             var apiClientModel = ApiClientModel.CreateFrom(openApiDocument, new string[] { "Insurance" });
             var apiModelContext = ApiModelContext.CreateFrom(apiClientModel);
 
-            //generate cshart code
+            // generate cshart code
             var csharpClientGenerator = new CSharpApiClientGenerator(apiModelContext);
             csharpClientGenerator
                 .GenerateFiles(
@@ -43,7 +43,7 @@ namespace IfApi.Client.CodeGenerator
 
         private static OpenApiDocument ReadOpenApiDocument()
         {
-            string fileName = "getquote-se.json";
+            string fileName = "esignature.rest.docusign.json";
             string path = "C:\\GIT\\json\\";
 
             var jsonStream = File.ReadAllBytes($"{path}{fileName}");
