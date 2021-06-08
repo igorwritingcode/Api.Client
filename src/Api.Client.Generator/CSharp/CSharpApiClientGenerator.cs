@@ -25,16 +25,16 @@ namespace Api.Client.Generator.CSharp
                 WriteToDocument(documentWriter, $"{request.Value.Name}Request.gen.cs", resourcesGenerator.GenerateApiClientRequests(request));
             }
 
-            //foreach (var apiResource in _context.GetResources())
-            //{
-            //    WriteToDocument(documentWriter, $"{apiResource.Key}Resource.gen.cs", resourcesGenerator.GenerateApiClientResources(apiResource));
-            //}
+            foreach (var apiResource in _context.GetResources())
+            {
+                WriteToDocument(documentWriter, $"{apiResource.Key}Resource.gen.cs", resourcesGenerator.GenerateApiClientResources(apiResource));
+            }
 
 
-            //foreach (var apiResource in _context.GetResources())
-            //{
-            //    WriteToDocument(documentWriter, $"{apiResource.Key}Client.gen.cs", resourcesGenerator.GenerateApiClient(apiResource, "ClassName"));
-            //}
+            foreach (var apiResource in _context.GetResources())
+            {
+                WriteToDocument(documentWriter, $"{apiResource.Key}Client.gen.cs", resourcesGenerator.GenerateApiClient(apiResource, "ClassName"));
+            }
         }
 
         private static void WriteToDocument(IDocumentWriter documentWriter, string path, string content)

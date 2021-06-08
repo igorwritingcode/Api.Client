@@ -10,7 +10,7 @@ namespace IfApi.Client.CodeGenerator
 {
     class Program
     {
-        private const string OutputPath = "../../../../IfApi.Client/";
+        private const string OutputPath = "../../../../Generated.Client/";
 
         static void Main(string[] args)
         {
@@ -43,7 +43,8 @@ namespace IfApi.Client.CodeGenerator
 
         private static OpenApiDocument ReadOpenApiDocument()
         {
-            string fileName = "esignature.rest.docusign.json";
+            string fileName = "paychex.json";
+            //string fileName = "esignature.rest.docusign.json";
             string path = "C:\\GIT\\json\\";
 
             var jsonStream = File.ReadAllBytes($"{path}{fileName}");

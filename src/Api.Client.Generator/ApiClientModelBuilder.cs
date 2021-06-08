@@ -1,6 +1,7 @@
 ﻿using Api.Client.Generator.CSharp;
 using Api.Client.Generator.Model;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,7 +23,7 @@ namespace Api.Client.Generator
         {
             ApiRequest apiRequest = new()
             {
-                Name = operation.OperationId.FirstUpper(),
+                Name = operation.OperationId?.FirstUpper(),
                 HttpMethod = httpMethod.ToUpper(),
                 RestPath = restPath
             };
@@ -118,7 +119,7 @@ namespace Api.Client.Generator
                 {
                     var apiRequest = CreateApiRequest(operation.Value, operation.Key.ToString(), pathItem.Key);
                     apiRequest.Responses = CreateApiResponses(operation.Value);
-                    apiRequests.Add(operation.Value.OperationId, apiRequest);
+                    apiRequests.Add(operation.Value.OperationId ?? Guid.NewGuid().ToString(), apiRequest);
                 }
             }
 
