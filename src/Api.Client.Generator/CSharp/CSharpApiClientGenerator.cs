@@ -19,21 +19,23 @@ namespace Api.Client.Generator.CSharp
             {
                 if(request.Value.Body != null)
                 {
-                    WriteToDocument(documentWriter, $"{request.Value.Name}Body.gen.cs", resourcesGenerator.GenerateRequestBody(request));
+                    WriteToDocument(documentWriter, $"{request.Value.Name}.Body.gen.cs", resourcesGenerator.GenerateRequestBody(request));
                 }
                 
-                WriteToDocument(documentWriter, $"{request.Value.Name}Request.gen.cs", resourcesGenerator.GenerateApiClientRequests(request));
+                WriteToDocument(documentWriter, $"{request.Value.Name}.Request.gen.cs", resourcesGenerator.GenerateApiClientRequests(request));
             }
 
             foreach (var apiResource in _context.GetResources())
             {
-                WriteToDocument(documentWriter, $"{apiResource.Key}Resource.gen.cs", resourcesGenerator.GenerateApiClientResources(apiResource));
+                WriteToDocument(documentWriter, $"{apiResource.Key}.Resource.gen.cs", 
+                    resourcesGenerator.GenerateApiClientResources(apiResource));
             }
 
 
             foreach (var apiResource in _context.GetResources())
             {
-                WriteToDocument(documentWriter, $"{apiResource.Key}Client.gen.cs", resourcesGenerator.GenerateApiClient(apiResource, "ClassName"));
+                WriteToDocument(documentWriter, $"{apiResource.Key}.Client.gen.cs", 
+                    resourcesGenerator.GenerateApiClient(apiResource, "ApiClient"));
             }
         }
 

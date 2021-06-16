@@ -82,7 +82,7 @@ namespace Api.Client.Generator
                 ApiField field = new()
                 {
                     Name = property.Key.FirstUpper(),
-                    Type = ApiFieldTypeConverter.Convert(property.Value.Type)
+                    Type = ApiFieldTypeConverter.Convert(property.Value.Type, property.Value.Format)
                 };
 
                 if (field.Type is ApiFieldType.Object)
@@ -109,7 +109,7 @@ namespace Api.Client.Generator
                 ApiField childField = new();
 
                 childField.Name = element.Key;
-                childField.Type = ApiFieldTypeConverter.Convert(element.Value.Type);
+                childField.Type = ApiFieldTypeConverter.Convert(element.Value.Type, element.Value.Format);
 
                 if (ApiFieldTypeConverter.Convert(element.Value.Type) is ApiFieldType.Object)
                 {

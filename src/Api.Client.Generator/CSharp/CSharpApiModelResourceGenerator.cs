@@ -120,7 +120,7 @@ namespace Api.Client.Generator.CSharp
         {
             var indent = new Indent();
             var builder = new StringBuilder();
-            var requestName = $"{request.Value.Name}Request";
+            var requestName = RequestName(request);
 
             builder.AppendLine($"{indent}public class {requestName} ");
             builder.AppendLine($"{indent}{{");
@@ -188,28 +188,39 @@ namespace Api.Client.Generator.CSharp
 
         public string GenerateApiClientResources(KeyValuePair<string, ApiResource> resource)
         {
+            var indent = new Indent();
             var builder = new StringBuilder();
 
-            builder.AppendLine($"public class {resource.Key}Resource");
-            builder.AppendLine($"{{");
+            builder.AppendLine($"{indent}public class {resource.Key}Resource");
+            builder.AppendLine($"{indent}{{");
             
-            builder.AppendLine($"IClient Client {{ get; init; }}");
+            indent.Increment();
             
-            builder.AppendLine($"public {resource.Key}Resource (IClient client)");
-            builder.AppendLine($"{{");
-            builder.AppendLine($"Client = client;");
-            builder.AppendLine($"}}");
+            builder.AppendLine($"{indent}IClient Client {{ get; init; }}");
+            
+            // Class constructor
+            builder.AppendLine($"{indent}public {resource.Key}Resource (IClient client)");
+            builder.AppendLine($"{indent}{{");
+            indent.Increment();
+            builder.AppendLine($"{indent}Client = client;");
+            indent.Decrement();
+            builder.AppendLine($"{indent}}}");
 
-            //TODO: change there.
-            foreach (var request in resource.Value.Requests)
+            // Resource requests
+            foreach (var request in resource.Value.Requests.Where(b => b.Value.Body is not null))
             {
-                builder.AppendLine($"public {request.Value.Name} {request.Value.Name} ({request.Value.Body.ClassName} body)");
-                builder.AppendLine($"{{");
-                builder.AppendLine($"return new {request.Value.Name}(Client, body);");
-                builder.AppendLine($"}}");
-            }
+                var responseOk = request.Value.Responses.Where(w => w.StatusCode == "200").FirstOrDefault();
+                var requestName = RequestName(request).FirstUpper();
 
-            builder.AppendLine($"}}");
+                builder.AppendLine($"{indent}public {responseOk.Body.ClassName} {requestName} ({request.Value.Body.ClassName} body)");
+                builder.AppendLine($"{indent}{{");
+                indent.Increment();
+                builder.AppendLine($"{indent}return new {requestName} (Client, body);");
+                indent.Decrement();
+                builder.AppendLine($"{indent}}}");
+            }
+            indent.Decrement();
+            builder.AppendLine($"{indent}}}");
 
             return builder.ToString();
         }
@@ -230,6 +241,13 @@ namespace Api.Client.Generator.CSharp
             return builder.ToString();
         }
 
+        public static string GenerateResourceDefinition(string apiName)
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine($"public override string Name => \"{apiName}\"");
+            return builder.ToString();
+        }
+
         private static string GenerateClientDefinition(string apiName)
         {
             var builder = new StringBuilder();
@@ -241,11 +259,11 @@ namespace Api.Client.Generator.CSharp
             return builder.ToString();
         }
 
-        public static string GenerateResourceDefinition(string apiName)
+        private static string RequestName(KeyValuePair<string, ApiRequest> request)
         {
-            var builder = new StringBuilder();
-            builder.AppendLine($"public override string Name => \"{apiName}\"");
-            return builder.ToString();
+            return $"{request.Key}Request";
         }
+
+        
     }
 }

@@ -10,6 +10,7 @@ namespace Api.Client.Generator.CSharp.Extension
                 "string" => "string",
                 "boolean" => "boolean",
                 "bool" => "bool",
+                "number" => "integer",
                 _ => "object"
             };
 

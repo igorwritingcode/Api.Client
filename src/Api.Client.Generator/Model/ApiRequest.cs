@@ -11,7 +11,7 @@ namespace Api.Client.Generator.Model
         public string Name { get; set; }
         public string RestPath { get; set; }
         public string HttpMethod { get; set; }
-        public ApiFieldType.Object? Body { get; set; } = new();
+        public ApiFieldType.Object? Body { get; set; }
         public string[] Parameters { get; set; }
         public IEnumerable<ApiResponse> Responses { get; set; }
     }
@@ -48,6 +48,18 @@ namespace Api.Client.Generator.Model
             public Primitive(string type)
             {
                 Type = type;
+            }
+        }
+
+        public class Number : ApiFieldType
+        {
+            public string Type { get; set; } = default!;
+            public string Format { get; set; } = default!;
+
+            public Number(string type, string format)
+            {
+                Type = type;
+                Format = format;
             }
         }
     }
